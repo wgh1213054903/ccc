@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Power">
+	<typeAlias alias="power" type="com.jk.model.Power"/>
+	<resultMap class="power" id="powerResult">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="icon" column="icon"/>
+		<result property="type" column="type"/>
+		<result property="url" column="url"/>
+		<result property="pid" column="pid"/>
+		<result property="target" column="target"/>
+		
+	
+	</resultMap>
+	
+	<!-- 全部加载节点权限列表查询 -->
+	<select id="powerList" parameterClass="power" resultMap="powerResult">
+		select * from t_tree
+	</select>
+	
+	<!-- 获得树形节点的根节点 -->
+	<select id="getPowerRootNode" parameterClass="power" resultMap="powerResult">
+		select * from t_tree where pid is null
+	</select>
+	
+	<!-- 判断当前节点是否存在子节点 -->
+	<select id="isExsitChildrenNode" parameterClass="power" resultMap="powerResult"> 
+		select * from t_tree where pid = #id#
+	</select>
+	<!-- 修改节点信息 -->
+	<update id="updatePower" parameterClass="power">
+	update t_tree set name = #name#, icon = #icon#, url = #url#, target = #target#, type = #type# where id = #id#
+	</update>
+	<!-- 删除节点信息 -->
+	<delete id="deletePower" parameterClass="power">
+	delete from t_tree  where id = #id#
+	</delete>
+	<!-- 新增节点信息 -->
+	<insert id="addPowerNode" parameterClass="power">	
+	insert into t_tree(name,icon,url,target,type,pid) values(#name#,#icon#,#url#,#target#,#type#,#pid#)
+	</insert>
+	<insert  id ="insertMany"  parameterClass ="java.util.List" >   
+
+      <![CDATA[  
+          insert into t_tree( name , icon , type,target,url ) values  
+      ]]>    
+
+      <iterate  conjunction ="," >   
+
+           <![CDATA[  
+
+               (#tree[].name#, #tree[].icon#, #tree[].type#,#tree[].target#,#tree[].url#)  
+
+           ]]>   
+
+       </iterate >   
+  </insert> 
+</sqlMap>
